@@ -196,8 +196,14 @@ ETargetType CPlayerManager::TargetPlayerString(int iCommandClient, const char* t
 			if (!player)
 				continue;
 
-			if (V_stristr(player->GetPlayerName(), target))
+			char* end;
+			int userid = strtol(target, &end, 10);
+
+			if (!(*end) && g_pEngineServer2->GetPlayerUserId(i) == userid)
 			{
+				targetType = ETargetType::PLAYER;
+				clients[iNumClients++] = i;
+			} else if (V_stristr(player->GetPlayerName(), target)) {
 				targetType = ETargetType::PLAYER;
 				clients[iNumClients++] = i;
 			}

@@ -52,4 +52,13 @@ public:
 	DECLARE_SCHEMA_CLASS(CCSWeaponBase)
 };
 
+class CBasePlayerWeapon : public CEconEntity {
+public:
+	DECLARE_SCHEMA_CLASS(CBasePlayerWeapon);
+
+	SCHEMA_FIELD(int, m_iClip1);
+	SCHEMA_FIELD(int, m_iClip2);
+	SCHEMA_FIELD(int, m_pReserveAmmo);
+};
+
 void FixWeapon(CCSWeaponBase *pWeapon);

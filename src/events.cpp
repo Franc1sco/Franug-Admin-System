@@ -23,6 +23,7 @@
 #include "ctimer.h"
 #include "eventlistener.h"
 #include "entity/cbaseplayercontroller.h"
+#include "entity/ccsweaponbase.h"
 
 #include "tier0/memdbgon.h"
 
@@ -77,3 +78,27 @@ GAME_EVENT_F(player_spawn)
 
 	Message("EVENT FIRED: %s %s\n", pEvent->GetName(), pController->GetPlayerName());
 }
+
+/*
+GAME_EVENT_F(player_death)
+{
+	CBasePlayerController* pController = (CBasePlayerController*)pEvent->GetPlayerController("attacker");
+
+	if (!pController)
+		return;
+
+	CBasePlayerPawn* pPawn = pController->GetPawn();
+
+	if (!pPawn)
+		return;
+
+	CCSPlayer_ItemServices* pItemServices = pPawn->m_pItemServices;
+
+	CBasePlayerWeapon* weapon = pItemServices->m_hActiveWeapon().Get();
+
+	if (weapon) {
+		weapon->m_iClip1.Set(50);
+	}
+
+	//Message("EVENT FIRED: %s %s\n", pEvent->GetName(), pController->GetPlayerName());
+}*/

@@ -67,6 +67,9 @@ class CCSPlayer_ItemServices
 {
 public:
 	DECLARE_SCHEMA_CLASS(CCSPlayer_ItemServices);
+
+	//SCHEMA_FIELD(CHandle<CBasePlayerWeapon>, m_hActiveWeapon);
+	SCHEMA_FIELD(uint16_t, m_iAmmo);
 	
 	virtual ~CCSPlayer_ItemServices() = 0;
 private:
