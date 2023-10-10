@@ -151,10 +151,10 @@ void ParseChatCommand(const char *pMessage, CCSPlayerController *pController)
 	{
 		g_CommandList[index](args, pController);
 	}
-	else
+	/*else
 	{
 		ParseWeaponCommand(pController, args[0]);
-	}
+	}*/
 }
 
 void ClientPrintAll(int hud_dest, const char *msg, ...)
@@ -204,6 +204,7 @@ CON_COMMAND_CHAT(stopsound, "stop weapon sounds")
 	ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX"You have toggled weapon effects.");
 }
 
+/*
 CON_COMMAND_CHAT(ztele, "teleport to spawn")
 {
 	if (!player)
@@ -279,7 +280,7 @@ CON_COMMAND_CHAT(ztele, "teleport to spawn")
 				return;
 			}
 		});
-}
+}*/
 
 #ifdef _DEBUG
 CON_COMMAND_CHAT(message, "message someone")

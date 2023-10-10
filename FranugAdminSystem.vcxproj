@@ -169,7 +169,7 @@
     <ClCompile Include="src\addresses.cpp" />
     <ClCompile Include="src\adminsystem.cpp" />
     <ClCompile Include="src\commands.cpp" />
-    <ClCompile Include="src\cs2fixes.cpp" />
+    <ClCompile Include="src\franugadminsystem.cpp" />
     <ClCompile Include="src\cs2_sdk\interfaces\centitysystem.cpp" />
     <ClCompile Include="src\cs2_sdk\interfaces\cs2_interfaces.cpp" />
     <ClCompile Include="src\cs2_sdk\schema.cpp" />
@@ -189,7 +189,7 @@
     <ClInclude Include="src\adminsystem.h" />
     <ClInclude Include="src\commands.h" />
     <ClInclude Include="src\common.h" />
-    <ClInclude Include="src\cs2fixes.h" />
+    <ClInclude Include="src\franugadminsystem.h" />
     <ClInclude Include="src\cs2_sdk\entity\cbaseentity.h" />
     <ClInclude Include="src\cs2_sdk\entity\cbasemodelentity.h" />
     <ClInclude Include="src\cs2_sdk\entity\cbaseplayercontroller.h" />

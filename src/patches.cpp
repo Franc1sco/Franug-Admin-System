@@ -31,13 +31,8 @@
 
 CMemPatch g_CommonPatches[] =
 {
-	CMemPatch(&modules::server, sigs::MovementUnlock, sigs::Patch_MovementUnlock, "ServerMovementUnlock"),
+	//CMemPatch(&modules::server, sigs::MovementUnlock, sigs::Patch_MovementUnlock, "ServerMovementUnlock"),
 	CMemPatch(&modules::vscript, sigs::VScriptEnable, sigs::Patch_VScriptEnable, "VScriptEnable"),
-};
-
-CMemPatch g_ClientPatches[] =
-{
-	CMemPatch(&modules::client, sigs::MovementUnlock, sigs::Patch_MovementUnlock, "ClientMovementUnlock"),
 };
 
 #ifdef _WIN32
@@ -53,13 +48,6 @@ void InitPatches()
 	for (int i = 0; i < sizeof(g_CommonPatches) / sizeof(*g_CommonPatches); i++)
 		g_CommonPatches[i].PerformPatch();
 
-	// Dedicated servers don't load client
-	if (!CommandLine()->HasParm("-dedicated"))
-	{
-		for (int i = 0; i < sizeof(g_ClientPatches) / sizeof(*g_ClientPatches); i++)
-			g_ClientPatches[i].PerformPatch();
-	}
-
 #ifdef _WIN32
 	// None of the tools are loaded without, well, -tools
 	if (CommandLine()->HasParm("-tools"))
@@ -74,12 +62,6 @@ void UndoPatches()
 {
 	for (int i = 0; i < sizeof(g_CommonPatches) / sizeof(*g_CommonPatches); i++)
 		g_CommonPatches[i].UndoPatch();
-
-	if (!CommandLine()->HasParm("-dedicated"))
-	{
-		for (int i = 0; i < sizeof(g_ClientPatches) / sizeof(*g_ClientPatches); i++)
-			g_ClientPatches[i].UndoPatch();
-	}
 
 #ifdef _WIN32
 	if (CommandLine()->HasParm("-tools"))

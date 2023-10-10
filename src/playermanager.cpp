@@ -127,7 +127,7 @@ ETargetType CPlayerManager::TargetPlayerString(int iCommandClient, const char* t
 	else if (!V_stricmp(target, "@randomct"))
 		targetType = ETargetType::RANDOM_CT;
 	
-	if (targetType == ETargetType::SELF)
+	if (targetType == ETargetType::SELF && iCommandClient != NULL)
 	{
 		clients[iNumClients++] = iCommandClient;
 	}

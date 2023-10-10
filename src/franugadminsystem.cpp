@@ -21,7 +21,7 @@
 #include "protobuf/generated/usermessages.pb.h"
 #include "protobuf/generated/cs_gameevents.pb.h"
 
-#include "cs2fixes.h"
+#include "franugadminsystem.h"
 #include "iserver.h"
 
 #include "appframework/IAppSystem.h"
@@ -57,7 +57,7 @@ void Message(const char *msg, ...)
 	char buf[1024] = {};
 	V_vsnprintf(buf, sizeof(buf) - 1, msg, args);
 
-	ConColorMsg(Color(255, 0, 255, 255), "[CS2Fixes] %s", buf);
+	ConColorMsg(Color(255, 0, 255, 255), "%s", buf);
 
 	va_end(args);
 }
@@ -421,25 +421,25 @@ const char *CS2Fixes::GetDate()
 
 const char *CS2Fixes::GetLogTag()
 {
-	return "CS2Fixes";
+	return "Franug Admin System";
 }
 
 const char *CS2Fixes::GetAuthor()
 {
-	return "xen & poggu";
+	return "Franc1sco Franug";
 }
 
 const char *CS2Fixes::GetDescription()
 {
-	return "A bunch of experiments thrown together into one big mess of a plugin.";
+	return "Admin tools";
 }
 
 const char *CS2Fixes::GetName()
 {
-	return "CS2Fixes";
+	return "Franug Admin System";
 }
 
 const char *CS2Fixes::GetURL()
 {
-	return "https://github.com/Source2ZE/CS2Fixes";
+	return "https://steamcommunity.com/id/franug";
 }

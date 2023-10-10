@@ -34,9 +34,156 @@ CAdminSystem* g_pAdminSystem;
 
 CUtlMap<uint32, FnChatCommandCallback_t> g_CommandList(0, 0, DefLessFunc(uint32));
 
+WeaponMapEntry_t WeaponMapAdmin[] = {
+	{"bizon",		  "weapon_bizon",			 1400, 26},
+	{"mac10",		  "weapon_mac10",			 1400, 27},
+	{"mp7",			"weapon_mp7",				 1700, 23},
+	{"mp9",			"weapon_mp9",				 1250, 34},
+	{"p90",			"weapon_p90",				 2350, 19},
+	{"ump45",		  "weapon_ump45",			 1700, 24},
+	{"ak47",			 "weapon_ak47",			 2500, 7},
+	{"aug",			"weapon_aug",				 3500, 8},
+	{"famas",		  "weapon_famas",			 2250, 10},
+	{"galilar",		"weapon_galilar",			 2000, 13},
+	{"m4a4",			 "weapon_m4a1",			 3100, 16},
+	{"m4a1",			 "weapon_m4a1_silencer", 3100, 60},
+	{"sg556",		  "weapon_sg556",			 3500, 39},
+	{"awp",			"weapon_awp",				 4750, 9},
+	{"g3sg1",		  "weapon_g3sg1",			 5000, 11},
+	{"scar20",		   "weapon_scar20",			 5000, 38},
+	{"ssg08",		  "weapon_ssg08",			 2500, 40},
+	{"mag7",			 "weapon_mag7",			 2000, 29},
+	{"nova",			 "weapon_nova",			 1500, 35},
+	{"sawedoff",		 "weapon_sawedoff",		 1500, 29},
+	{"xm1014",		   "weapon_xm1014",			 3000, 25},
+	{"m249",			 "weapon_m249",			 5750, 14},
+	{"negev",		  "weapon_negev",			 5750, 28},
+	{"deagle",		   "weapon_deagle",			 700 , 1},
+	{"elite",		  "weapon_elite",			 800 , 2},
+	{"fiveseven",	  "weapon_fiveseven",		 500 , 3},
+	{"glock",		  "weapon_glock",			 200 , 4},
+	{"hkp2000",		"weapon_hkp2000",			 200 , 32},
+	{"p250",			 "weapon_p250",			 300 , 36},
+	{"tec9",			 "weapon_tec9",			 500 , 30},
+	{"usp_silencer",	 "weapon_usp_silencer",	 200 , 61},
+	{"cz75a",		  "weapon_cz75a",			 500 , 63},
+	{"revolver",		 "weapon_revolver",		 600 , 64},
+	{"he",			"weapon_hegrenade",			 300 , 44, 1},
+	{"molotov",		"weapon_molotov",			 850 , 46, 1},
+	{"knife",		"weapon_knife",				 0	 , 42},	// default CT knife
+	{"kevlar",		   "item_kevlar",			 600 , 50},
+};
+
 #define ADMIN_PREFIX "Admin %s has "
 
-CON_COMMAND_F(c_reload_admins, "Reload admin config", FCVAR_SPONLY | FCVAR_LINKED_CONCOMMAND)
+CON_COMMAND_F(sm_give, "Give a weapon", FCVAR_SPONLY | FCVAR_LINKED_CONCOMMAND)
+{
+	if (args.ArgC() != 3)
+	{
+		Message("Usage: !give <player> <weapon>\n");
+		return;
+	}
+
+	int iNumClients = 0;
+	int pSlot[MAXPLAYERS];
+
+	ETargetType nType = g_playerManager->TargetPlayerString(NULL, args[1], iNumClients, pSlot);
+
+	if (!iNumClients)
+	{
+		Message("Target not found.\n");
+		return;
+	}
+
+	for (int i = 0; i < sizeof(WeaponMapAdmin) / sizeof(*WeaponMapAdmin); i++)
+	{
+		WeaponMapEntry_t weaponEntry = WeaponMapAdmin[i];
+
+		if (!V_stricmp(args[2], weaponEntry.command))
+		{
+			for (int i = 0; i < iNumClients; i++)
+			{
+				CBasePlayerController* pTarget = (CBasePlayerController*)g_pEntitySystem->GetBaseEntity((CEntityIndex)(pSlot[i] + 1));
+
+				if (!pTarget)
+					continue;
+
+				CCSPlayerPawn* pPawn = (CCSPlayerPawn*)pTarget->GetPawn();
+				if (!pPawn || pPawn->m_iHealth() <= 0)
+					continue;
+
+				CCSPlayer_ItemServices* pItemServices = pPawn->m_pItemServices;
+				pItemServices->GiveNamedItem(weaponEntry.szWeaponName);
+
+				Message("Gived weapon %s to %s.\n", args[2], pTarget->GetPlayerName());
+			}
+			return;
+		}
+	}
+	Message("Invalid weapon name\n");
+}
+
+CON_COMMAND_CHAT(give, "give a weapon to a player")
+{
+	if (!player)
+		return;
+
+	int iCommandPlayer = player->GetPlayerSlot();
+
+	ZEPlayer* pPlayer = g_playerManager->GetPlayer(iCommandPlayer);
+
+	if (!pPlayer->IsAdminFlagSet(ADMFLAG_BAN))
+	{
+		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX"You don't have access to this command.");
+		return;
+	}
+
+	if (args.ArgC() < 3)
+	{
+		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX"Usage: !give <name> <weapon>");
+		return;
+	}
+
+	int iNumClients = 0;
+	int pSlot[MAXPLAYERS];
+
+	ETargetType nType = g_playerManager->TargetPlayerString(iCommandPlayer, args[1], iNumClients, pSlot);
+
+	if (!iNumClients)
+	{
+		ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX"Target not found.");
+		return;
+	}
+
+	for (int i = 0; i < sizeof(WeaponMapAdmin) / sizeof(*WeaponMapAdmin); i++)
+	{
+		WeaponMapEntry_t weaponEntry = WeaponMapAdmin[i];
+
+		if (!V_stricmp(args[2], weaponEntry.command))
+		{
+			for (int i = 0; i < iNumClients; i++)
+			{
+				CBasePlayerController* pTarget = (CBasePlayerController*)g_pEntitySystem->GetBaseEntity((CEntityIndex)(pSlot[i] + 1));
+
+				if (!pTarget)
+					continue;
+
+				CCSPlayerPawn* pPawn = (CCSPlayerPawn*)pTarget->GetPawn();
+				if (!pPawn || pPawn->m_iHealth() <= 0)
+					continue;
+
+				CCSPlayer_ItemServices* pItemServices = pPawn->m_pItemServices;
+				pItemServices->GiveNamedItem(weaponEntry.szWeaponName);
+
+				ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX"Gived weapon %s to %s.", args[2], pTarget->GetPlayerName());
+			}
+			return;
+		}
+	}
+	ClientPrint(player, HUD_PRINTTALK, CHAT_PREFIX"Invalid weapon name");
+}
+
+CON_COMMAND_F(sm_reload_admins, "Reload admin config", FCVAR_SPONLY | FCVAR_LINKED_CONCOMMAND)
 {
 	if (!g_pAdminSystem->LoadAdmins())
 		return;
@@ -54,7 +201,7 @@ CON_COMMAND_F(c_reload_admins, "Reload admin config", FCVAR_SPONLY | FCVAR_LINKE
 	Message("Admins reloaded\n");
 }
 
-CON_COMMAND_F(c_reload_infractions, "Reload infractions file", FCVAR_SPONLY | FCVAR_LINKED_CONCOMMAND)
+CON_COMMAND_F(sm_reload_infractions, "Reload infractions file", FCVAR_SPONLY | FCVAR_LINKED_CONCOMMAND)
 {
 	if (!g_pAdminSystem->LoadInfractions())
 		return;
@@ -723,7 +870,7 @@ bool CAdminSystem::LoadAdmins()
 	KeyValues* pKV = new KeyValues("admins");
 	KeyValues::AutoDelete autoDelete(pKV);
 
-	const char *pszPath = "addons/cs2fixes/configs/admins.cfg";
+	const char *pszPath = "addons/configs/admins.cfg";
 
 	if (!pKV->LoadFromFile(g_pFullFileSystem, pszPath))
 	{
@@ -767,7 +914,7 @@ bool CAdminSystem::LoadInfractions()
 	KeyValues* pKV = new KeyValues("infractions");
 	KeyValues::AutoDelete autoDelete(pKV);
 
-	const char *pszPath = "addons/cs2fixes/data/infractions.txt";
+	const char *pszPath = "addons/data/infractions.txt";
 
 	if (!pKV->LoadFromFile(g_pFullFileSystem, pszPath))
 	{
@@ -840,7 +987,7 @@ void CAdminSystem::SaveInfractions()
 		pKV->AddSubKey(pSubKey);
 	}
 
-	const char *pszPath = "addons/cs2fixes/data/infractions.txt";
+	const char *pszPath = "addons/data/infractions.txt";
 
 	if (!pKV->SaveToFile(g_pFullFileSystem, pszPath))
 		Warning("Failed to save infractions to %s", pszPath);
